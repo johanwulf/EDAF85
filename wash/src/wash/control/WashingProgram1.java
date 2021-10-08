@@ -48,7 +48,6 @@ public class WashingProgram1 extends ActorThread<WashingMessage> {
             
             // Spin for five simulated minutes
             Thread.sleep(30*60000 / Settings.SPEEDUP);
-            System.out.println("washing done");
 
             temp.send(new WashingMessage(this, WashingMessage.TEMP_IDLE));
             receive();
@@ -67,11 +66,9 @@ public class WashingProgram1 extends ActorThread<WashingMessage> {
             
             spin.send(new WashingMessage(this, WashingMessage.SPIN_FAST));
             receive();
-            System.out.println("spinning");
             Thread.sleep(300*1000 / Settings.SPEEDUP);
             water.send(new WashingMessage(this, WashingMessage.WATER_IDLE));
             
-            System.out.println("setting SPIN_OFF");
             spin.send(new WashingMessage(this, WashingMessage.SPIN_OFF));
             receive();
             
@@ -82,7 +79,7 @@ public class WashingProgram1 extends ActorThread<WashingMessage> {
             temp.send(new WashingMessage(this, WashingMessage.TEMP_IDLE));
             water.send(new WashingMessage(this, WashingMessage.WATER_IDLE));
             spin.send(new WashingMessage(this, WashingMessage.SPIN_OFF));
-            System.out.println("washing program terminated");
+            System.out.println("washing program 3 terminated");
         }
     }
 }

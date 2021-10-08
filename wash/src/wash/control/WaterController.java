@@ -10,7 +10,6 @@ public class WaterController extends ActorThread<WashingMessage> {
     private int command;
     private double inputFlow = 0.1;
     private double outputFlow = 0.2;
-    private double dt = 2;
     private boolean drained;
     private ActorThread<WashingMessage> sender;
 
@@ -49,12 +48,12 @@ public class WaterController extends ActorThread<WashingMessage> {
                 }
 
                 if (command == WashingMessage.WATER_FILL) {
-                    if (io.getWaterLevel() + inputFlow*dt > water) {
+                    if (io.getWaterLevel() + inputFlow*2 > water) {
                         io.fill(false);
                         sender.send(new WashingMessage(this, WashingMessage.ACKNOWLEDGMENT));
                     }
                 } else if (command == WashingMessage.WATER_DRAIN) {
-                    if (io.getWaterLevel() - outputFlow*dt < water && !drained) {
+                    if (io.getWaterLevel() - outputFlow*2 < water && !drained) {
                         drained = true;
                         sender.send(new WashingMessage(this, WashingMessage.ACKNOWLEDGMENT));
                     }
@@ -62,7 +61,7 @@ public class WaterController extends ActorThread<WashingMessage> {
 
             }
         } catch (Exception unexpected) {
-
+            throw new Error(unexpected);
         }
     }
 }

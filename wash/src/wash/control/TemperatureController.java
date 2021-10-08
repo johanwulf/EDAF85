@@ -6,11 +6,10 @@ import wash.io.WashingIO;
 public class TemperatureController extends ActorThread<WashingMessage> {
 
     private WashingIO io;
-    private double upperbound, lowerbound, temperature;
+    private double temp;
     private double uppermargin = 0.678;
     private double lowermargin = 0.0952;
-    private int command;
-    private int count = 0;
+    private int command, count;
     private boolean tempreached = false;
     private ActorThread<WashingMessage> sender;
 
@@ -34,23 +33,19 @@ public class TemperatureController extends ActorThread<WashingMessage> {
                             m.getSender().send(new WashingMessage(this, WashingMessage.ACKNOWLEDGMENT));
                             break;
                         case WashingMessage.TEMP_SET:
-                            count = 0;
-                            temperature = io.getTemperature();
-                            upperbound = m.getValue();
-                            lowerbound = m.getValue()-2;
+                            temp = m.getValue();
                             tempreached = false;
+                            count = 0;
                             break;
                     }
                 }
 
                 if (command == WashingMessage.TEMP_SET) {
-                    if (io.getTemperature() < lowerbound + lowermargin) {
+                    double upperbound = temp - uppermargin;
+                    double lowerbound = temp - 2 + lowermargin;
+                    if (io.getTemperature() < lowerbound) {
                         io.heat(true);
-
-                        if (tempreached) {
-                            tempreached = false;
-                        }
-                    } else if (io.getTemperature() > upperbound - uppermargin) {
+                    } else if (io.getTemperature() > upperbound) {
                         io.heat(false);
 
                         if (!tempreached) {
@@ -62,7 +57,8 @@ public class TemperatureController extends ActorThread<WashingMessage> {
                 if (tempreached && count == 0) {
                     count++;
                     sender.send(new WashingMessage(this, WashingMessage.ACKNOWLEDGMENT));
-                }  
+                }
+
             }
         } catch (Exception unexpected) {
 
