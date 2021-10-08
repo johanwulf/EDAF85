@@ -15,14 +15,13 @@ public class WaterController extends ActorThread<WashingMessage> {
 
     public WaterController(WashingIO io) {
         this.io = io;
-        this.water = 10;
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                WashingMessage m = receiveWithTimeout(20000 / Settings.SPEEDUP);
+                WashingMessage m = receiveWithTimeout(500 / Settings.SPEEDUP);
                 
                 if (m != null) {
                     command = m.getCommand();
